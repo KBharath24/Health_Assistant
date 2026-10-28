@@ -12,6 +12,19 @@ st.caption("Ask health-related questions")
 
 api_key = os.getenv("GROQ_API_KEY")
 
+# Streamlit Cloud stores secrets in st.secrets rather than in a local .env file.
+try:
+    api_key = api_key or st.secrets.get("GROQ_API_KEY")
+except Exception:
+    # st.secrets raises an exception when no local secrets file exists.
+    pass
+
+if not api_key:
+    st.error(
+        "Groq API key is missing. Add GROQ_API_KEY in Streamlit Cloud "
+        "under Settings > Secrets."
+    )
+    st.stop()
 
 client = Groq(api_key=api_key)
 
